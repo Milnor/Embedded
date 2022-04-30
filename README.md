@@ -11,7 +11,7 @@ Autodidactic embedded programming
 
 ## Components
 * Introduction to Embedded Systems Software and Development Environments (Coursera, audit only)
-    - [ ] Week 1 - simple application
+    - [x] Week 1 - simple application
     - [ ] Week 2 - build system
     - [ ] Week 3 - toolchain, linker
     - [ ] Final Assessment - memory
