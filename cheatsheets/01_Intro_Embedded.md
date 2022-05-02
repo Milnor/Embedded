@@ -46,3 +46,68 @@ TODO: add slide 14 details with .a library files?
 * `-mthumb-interwork` generate code that supports calling between ARM and Thumb (ISA)
 * `-mlittle-endian` little endian mode
 * `-mbig-endian` big endian mode
+
+## Preprocessor Directives
+* `#define`, `#undef`
+* `#ifndef`, `#ifdef`, `#endif`
+* `#include`
+* `#warning`, `#error`
+* `#pragma` - give specific instructions to compiler; ignored if not recognized
+    - e.g. `#pragma GCC target ("arch=armv6")
+    - e.g. `#pragma GCC poison printf` - disallow using printf
+    - e.g. `#pragma once` - a non-portable, non-standard one-liner include guard
+
+## Compile Time Switch
+* `-D<MACRO-NAME>`
+* `gcc -DMSP_PLATFORM -o main.out main.c`
+
+## Creating Modules
+* Implementation files (\*.c)
+    - contains function definitions, the actual implementations
+* Header files (\*.h)
+    - contains function declarations, macros, derived data type definitions
+    - the **interface**, should comment the inputs and outputs
+
+## Compiled Libraries
+* Static Libraries
+    - directly linked into output executable
+    - create using archiver
+* Shared Libraries
+    - pre-installed onto target
+    - create with **shared** flag
+
+## Linkers
+* combine object files into a single executable
+    - object code uses symbols to reference functions/variables
+* invoke *indirectly* from compiler (gcc) with no options
+* use the `-T` option to specify a **Linker File**
+    - LF details how to map compiled data into physical memory regions
+* must know **name** and **path** to library to link with it
+* `-nostdlib` flag stops automatic linking with standard libraries
+* after *locating*, symbols are removed and direct addresses are assigned into the object code
+
+## Executable File Formats
+* ELF, executable and linkable format
+* COFF, common object file format
+* Intel Hex Record
+* SREC, Motorola S Record
+* AIF, ARM image format
+
+## Linker Flags
+### Actual Linker Flags
+* `-map [NAME]` outputs memory map from the result of linking
+* `-T [NAME]` specifies linker script
+* `-o [NAME]` place output in specified filename
+* `-O<#>` level of optimization
+* `-Os` optimize for memory size
+* `-z stacksize=[SIZE]` amount of stack space to reserve
+* `-shared` produce a shared library
+* `-l[LIB]` link with library
+* `-L[DIR]` include library path
+* `-Wl,<OPTION>` pass option to linker from compiler
+* `-Xlinker <OPTION>` pass option to linker from compiler
+### Flags Passed to Linker from Compiler
+* `gcc <options...> -Xlinker -Map=main.map`
+* `gcc <options...> -Xlinker -T=mk125z_lnk.ld`
+* `gcc <options...> -Wl,option`
+* `gcc <options...> -Wl,-Map,main.map`
