@@ -111,3 +111,70 @@ TODO: add slide 14 details with .a library files?
 * `gcc <options...> -Xlinker -T=mk125z_lnk.ld`
 * `gcc <options...> -Wl,option`
 * `gcc <options...> -Wl,-Map,main.map`
+
+## Make
+### Usage
+* if you don't specify a specific target (`clean`, `all`, `main.o`), defaults to first target defined in the makefile
+### Makefiles
+* default names: `makefile`, `Makefile`, `sources.mk`, etc.
+* **rule** - requires target, prerequisites, and a recipe consisting of commands
+    ```make
+    target: prereq1 prereq2 prereq3
+            command1
+            command2
+    ```
+* comments start with #
+* can include other makefiles, e.g. `include sources.mk`
+* line continuation with \
+* command lines start with a tab
+* targets can depend on other targets
+#### Variables
+* Recursively Expanded `=`
+    - expands whenever used
+    - e.g. `CC=arm-none-eabi-gcc`
+* Simply Expanded `:=`
+    - expands only once at time of definition
+    - e.g. `ARCH:=$(shell arch)` // run Linux command to set data
+* Include Paths and Sources
+    ```make
+    INCLUDES=    \
+      -I./libs   \
+      -I./modem  \
+      -I./uart
+      
+      SRCS=        \
+        ./main.c   \
+        ./memory.c \
+        ./uart.c
+    ```
+* Automatic - scope limited to within a recipe
+    - `$@` Target Rule Name
+    - `$^` All Prerequisites
+    - `$<` Prerequisite Name
+* Pattern Matching Operator `%`
+    - matches target object rule with an associate source file
+        ```make
+        %.o: %.c
+            $(CC) -C $@ -o $< $(CFLAGS)
+        ```
+* Can use source variables (SRCS) to generate a list of object files variable (OBJS)
+    - `OBJS:=$(SRCS:.c=.o)` for every `*.c` file, associate a `*.o` file with the same name
+* Targets do NOT have to be a file
+    - use `.PHONY` directive
+    - e.g. `all`, `clean`, `debug`
+    ```make
+    .PHONY: all
+    all: main.out
+    main.out: $(OBJS)
+        gcc $(CFLAGS) -o main.out $(OBJS)
+        
+    .PHONY: clean
+    clean:
+        rm main.map $(OBJS) main.out
+    ```
+    
+#### What if you wanted to support multiple architectures instead of just multiple targets?
+* Functions & Dynamic Variables
+    - Use functions to process info `$(function arguments)`
+    - Gather data from the system outside of make with `$(shell command)`
+        * e.g. `OS:=$(shell uname)`
