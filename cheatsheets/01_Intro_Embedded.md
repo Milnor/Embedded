@@ -178,3 +178,90 @@ TODO: add slide 14 details with .a library files?
     - Use functions to process info `$(function arguments)`
     - Gather data from the system outside of make with `$(shell command)`
         * e.g. `OS:=$(shell uname)`
+    - Another example snippet
+        ```make
+        OS:=$(shell uname -s)
+        ifeq ($(OS),Linux)
+            CC=gcc
+        endif
+        ```
+* Overriding Variables
+    - pass input parameters into make to alter build
+        ```make
+        make all PLATFORM=msp432
+        ```
+        ```make
+        ifeq ($PLATFORM),MSP)
+            CPU=cortex-m4
+        endif
+        ```
+* Special Variables
+    - CC, compiler
+    - CPP, preprocessor
+    - AS, assembler
+    - LD, linker
+    - CFLAGS, C program flags
+    - CPPFLAGS, C preprocessor flags
+    - ASFLAGS, flags for assembler
+    - LDFLAGS, C program linker flags
+    - LDLIBS, extra flags for libraries
+
+#### More Examples
+**sources.mk**
+```make
+SRCS=   main.c \
+        my_file.c \
+        my_memory.c
+```
+**Makefile**
+```make
+# Fancy comments with usage notes go here...
+include sources.mk
+
+# Overrides
+CPU  = cortex-m0plus
+ARCH = thumb
+SPECS = nosys.specs
+
+# Compile Defines
+CC = arm-none-eabi-gcc
+LD = arm-none-eabi-ld
+BASENAME = demo
+TARGET = $(BASENAME).out
+LDFLAGS = -Wl,-Map=$(BASENAME).map
+CFLAGS = -mcpu=$(CPU) -m$(ARCH) --specs=$(SPECS) -Wall
+
+OBJS = $(SRCS:.c=.o)
+
+%.o : %.c
+        $(CC) -c $< $(CFLAGS) -o $@
+        
+.PHONY: build
+build: all
+.PHONY: all
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+        $(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) -o $@
+
+.PHONY: clean
+clean:
+        rm -f $(OBJS) $(TARGET) $(BASENAME).map
+```
+
+`make my_memory.o CPU=cortex-m4`
+
+## Other Useful Tools
+### GNU Binutils
+* `ls -la /usr/bin/arm-none-eabi*`
+* `as`, `ld`, etc.
+### Non-Binutils
+* `size` lists section sizes for object and executable files
+    - gives an idea of memory footprint of executable
+* `nm` lists the symbols from object files
+    - T = Code, R = Read Only, D = Initialized Data, B = Uninitialized Data (BSS)
+* `objcopy` copies and translates object files
+    - Binary, srec (Motorola), intel Hex Record (ihex), elf32-littlearm, etc.
+* `objdump` displays info from object files
+* `readelf` displays info from elf files
+* `gdb` debugger
