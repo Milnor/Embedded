@@ -10,7 +10,7 @@
 #*****************************************************************************
 
 #------------------------------------------------------------------------------
-# <Put a Description Here>
+# Makefile supporting native x64 and ARM Cortex (MSP432) targets
 #
 # Use: make [TARGET] [PLATFORM-OVERRIDES]
 #
@@ -33,9 +33,26 @@ ARCH =
 SPECS = 
 
 # Compiler Flags and Defines
-CC = 
-LD = 
-LDFLAGS = 
-CFLAGS = 
-CPPFLAGs = 
+ifeq ($(PLATFORM),HOST)
+	CC = gcc
+	LD = ld 
+	LDFLAGS = 
+	CFLAGS = -Wall -Werror -g -O0 -std=c99
+	CPPFLAGs = 
+else
+	CC = arm-none-eabi-gcc
+	LD = arm-none-eabi-ld 
+	LDFLAGS = 
+	CFLAGS = -Wall -Werror -g -O0 -std=c99
+	CPPFLAGs = 
+endif
 
+.PHONY: build
+build: all
+
+.PHONY: all
+all: $(TARGET).out
+
+.PHONY: clean
+clean:
+	rm -f *.o *.out *.map 	
