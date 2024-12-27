@@ -8,6 +8,7 @@ I've been asking ChatGPT to tutor me.
 
 ## Lessons Learned
 * You can type the dot in the name `DALL·E` on Windows with `Alt + 0183`.
+* `LD_SHOW_AUXV=1 ./program` will print the auxiliary vector
 
 ## Additional References (by humans, not AI)
 * [Horgan, Patrick. Linux x86 Program Start Up or - How the heck do we get to main()?](http://dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html)
